@@ -23,7 +23,7 @@ chat <- read_delim("path", "]", escape_double = FALSE,
   
 
 #Alternate text processing strategy. Depends on the type of your text file.
-# chat <- read_csv("C:/Users/user/Desktop/_chat.txt", col_names = FALSE) %>%
+# chat <- read_csv("path", col_names = FALSE) %>%
 #   separate(X2, into = c("X3", "X4"), sep = 10) %>%
 #   separate(X4, into = c("sender", "said"), sep = ":") %>%
 #   select(sender, said) %>%
@@ -56,7 +56,7 @@ chart %>%
   filter(n>=quantile(n,0.85)) %>%
   mutate( words = fct_reorder(words, n))%>% 
   ggplot(aes(words, n, fill = sender)) +
-  geom_col(show.legend = F) + 
+  geom_col() + 
   coord_flip() + 
   scale_fill_manual(values = brewer.pal(x+1, "Spectral")) + #In case you see error in this section, use a different colour scale or lower your x.
   labs(y = "# of messages sent", x = "Most used words", title = "Words that constitute top 15% of the chat", subtitle = "Grouped by participants")
