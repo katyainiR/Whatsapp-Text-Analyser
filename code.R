@@ -59,6 +59,6 @@ chart %>%
   geom_col(show.legend = F) + 
   coord_flip() + 
   scale_fill_manual(values = brewer.pal(x+1, "Spectral")) + #In case you see error in this section, use a different colour scale or lower your x.
-  labs(y = "# of messages sent", x = "Most used words", title = "Categorizing top 15% used words in chat by senders", subtitle = "....")
+  labs(y = "# of messages sent", x = "Most used words", title = "Words that constitute top 15% of the chat", subtitle = "Grouped by participants")
   
  
