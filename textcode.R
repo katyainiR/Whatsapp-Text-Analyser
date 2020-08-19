@@ -75,7 +75,7 @@ chart %>%
   geom_bar(stat = "identity", aes(fill = sender)) +
   coord_flip() + 
   scale_fill_manual(values = brewer.pal(x+1, "Spectral")) +
-  labs(x = "# of messages sent", y = "Most used words", title = "Top 15% Words categorised by senders", subtitle = "Top words calculated using most frequent words arranged by their percentile.")
+  labs(y = "# of messages sent", x = "Most used words", title = "Top 15% Words categorised by senders", subtitle = "Top words calculated using most frequent words arranged by their percentile.")
   
   
  
