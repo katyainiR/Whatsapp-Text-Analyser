@@ -6,42 +6,43 @@ library(tidytext)
 library(RColorBrewer)
 library(ggrepel)
 
+n = 7
 
 path = "C:/Users/user/Desktop/_chat.txt"
-
-chat <- read_delim(path, "]", escape_double = FALSE,
-                     col_names = FALSE, trim_ws = TRUE) %>%
-  select(-X1) %>%
-  separate(
-    X2, into = c("sender", "said"), sep = ":"
-  ) %>%
-  filter(!is.na(sender))
+chat <- read_csv(path, col_names = FALSE) %>%
+  separate(X2, into = c("X3", "X4"), sep = 10) %>%
+  separate(X4, into = c("sender", "said"), sep = ":") %>%
+  select(sender, said) %>%
   mutate(
-    sender = str_squish(sender),
-    said = str_to_lower(said)
+    said = str_to_lower(said),
+    sender = str_squish(sender)
   ) %>%
-    mutate(
-      sender = fct_lump(sender, n)
-    ) 
-  
+  filter(!is.na(sender)) %>%
+  mutate(
+    sender = fct_lump(sender, n)
+  )
+
+
 
 #Alternate text processor. Depends on the type of your text file.
-# chat <- read_csv(path, col_names = FALSE) %>%
-#   separate(X2, into = c("X3", "X4"), sep = 10) %>%
-#   separate(X4, into = c("sender", "said"), sep = ":") %>%
-#   select(sender, said) %>%
-#   mutate(
-#     said = str_to_lower(said),
-#     sender = str_squish(sender)
+# chat <- read_delim(path, "]", escape_double = FALSE,
+#                      col_names = FALSE, trim_ws = TRUE) %>%
+#   select(-X1) %>%
+#   separate(
+#     X2, into = c("sender", "said"), sep = ":"
 #   ) %>%
-#   filter(!is.na(sender)) %>%
+#   filter(!is.na(sender))
 #   mutate(
-#     sender = fct_lump(sender, n)
-#   )
+#     sender = str_squish(sender),
+#     said = str_to_lower(said)
+#   ) %>%
+#     mutate(
+#       sender = fct_lump(sender, n)
+#     ) 
+#   
 
 
-n = 7
-#MOst active participant.
+#Most active participant.
 q = chat %>%
   count(sender, sort = T)  %>%
   mutate(sender = fct_reorder(sender,n)) %>%
@@ -49,7 +50,7 @@ q = chat %>%
   geom_bar(stat = "identity")+ 
   coord_flip() + 
   labs(x = "Sender", y = "# of messages sent", title = "Most active participants in the group") + 
-  scale_fill_manual(values = brewer.pal(8, "Spectral")) 
+  scale_fill_manual(values = brewer.pal(n+1, "Spectral")) 
 
 
 chart = chat%>%
@@ -92,7 +93,7 @@ g = ggplot(NULL, aes(words, n)) +
     geom_bar(data = data, stat = "identity", aes(fill = sender)) +
     coord_flip() + 
     geom_text(data = filt, aes(x = words, label = scales::percent(pct), y = y.pos)) + 
-    scale_fill_manual(values = brewer.pal(8, "Spectral")) +
+    scale_fill_manual(values = brewer.pal(n+1, "Spectral")) +
     labs(y = "# of messages sent", x = "Most used words", title = "Top 15% Words categorised by senders", subtitle = "Top words calculated using most frequent words arranged by their percentile.")
 
 
