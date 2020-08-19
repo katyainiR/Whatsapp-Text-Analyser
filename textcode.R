@@ -50,15 +50,32 @@ chart = chat%>%
   #mutate(words = wordStem(words)) %>% 
   filter (!words %in% c(stop_words$word, "omitted", "media", "image", "deleted"), str_detect(words, "^[a-z]"), !is.na(words)) 
 
-# Most frequently used words.
+
+
+# top words that account for around 15% of all the words that were sent.
+top_words = chart %>%
+  count(words, sort = T) %>%
+  mutate(cumu = cumsum(n),
+         quartile = cumu/sum(n)) %>%
+  filter(quartile <= 0.15)
+
+
 chart %>%
-  add_count(words) %>%
-  filter(n>=quantile(n,0.85)) %>%
-  mutate( words = fct_reorder(words, n))%>% 
-  ggplot(aes(words, n, fill = sender)) +
-  geom_col() + 
+  filter(words %in% top_words$words) %>%
+  group_by(words, sender) %>%
+  count() %>%
+  ungroup() %>%
+  group_by(words) %>%
+  mutate(count = sum(n)) %>%
+  ungroup() %>%
+  mutate(
+    words = fct_reorder(words, count)  
+  ) %>%
+  ggplot(aes(words, n)) +
+  geom_bar(stat = "identity", aes(fill = sender)) +
   coord_flip() + 
-  scale_fill_manual(values = brewer.pal(x+1, "Spectral")) + #In case you see error in this section, use a different colour scale or lower your x.
-  labs(y = "# of messages sent", x = "Most used words", title = "Words that constitute top 15% of the chat", subtitle = "Grouped by participants")
+  scale_fill_manual(values = brewer.pal(x+1, "Spectral")) +
+  labs(x = "# of messages sent", y = "Most used words", title = "Top 15% Words categorised by senders", subtitle = "Top words calculated using most frequent words arranged by their percentile.")
+  
   
  
